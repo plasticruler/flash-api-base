@@ -3,10 +3,15 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
 app.config.from_object('config.DevConfig')
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, origins="*",allow_headers=[
+    "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
+    supports_credentials=True)
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
@@ -21,7 +26,7 @@ api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
 api.add_resource(resources.AllUsers, '/users')
 api.add_resource(resources.SecretResource, '/secret')
-api.add_resource(joplin.WebDavFile, '/wdv')
+api.add_resource(joplin.JoplinFile, '/wdv')
 
 
 @jwt.token_in_blacklist_loader
